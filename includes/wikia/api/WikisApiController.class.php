@@ -275,42 +275,7 @@ class WikisApiController extends WikiaApiController {
 	 * @responseParam array $wikis List of wikis hosted under $domain, empty if that is not a primary domain
 	 */
 	public function getWikisUnderDomain() {
-		global $wgWikiaBaseDomainRegex;
-		$domain = $this->request->getVal( 'domain' );
-		if ( !preg_match( '/\.' . $wgWikiaBaseDomainRegex . '$/', $domain ) ) {
-			throw new InvalidParameterApiException( 'domain' );
-		}
-
-		$normalizedDomain = wfNormalizeHost( $domain );
-		$cityId = WikiFactory::DomainToID( $normalizedDomain );
-
-		if ( !empty( $cityId ) && !WikiFactory::isLanguageWikisIndex( $cityId ) ) {
-			// there is a community at the domain root, make sure it is the primary domain
-			$primaryDomain = parse_url( WikiFactory::cityIDtoDomain( $cityId ), PHP_URL_HOST );
-			if ( wfNormalizeHost( $primaryDomain ) !== $normalizedDomain ) {
-				$this->response->setVal( 'primaryDomain', $primaryDomain );
-				$this->response->setVal( 'primaryProtocol',
-					wfHttpsEnabledForDomain( $primaryDomain ) ? 'https://' : 'http://' );
-				$this->response->setVal( 'wikis', [] );
-				return;
-			}
-		}
-
-		$wikis = WikiFactory::getWikisUnderDomain( $domain, true );
-		if ( empty( $wikis ) ) {
-			throw new NotFoundApiException();
-		}
-
-		if ( wfHttpsEnabledForDomain( $domain ) ) {
-			$wikis = array_map( function ( $wiki ) {
-				$wiki['city_url'] = wfHttpToHttps( $wiki['city_url'] );
-				return $wiki;
-			}, $wikis );
-		}
-
-		$this->response->setVal( 'primaryDomain', '' );
-		$this->response->setVal( 'primaryProtocol', '' );
-		$this->response->setVal( 'wikis', $wikis );
+		throw new NotFoundApiException();
 	}
 
 	/**
