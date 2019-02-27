@@ -745,6 +745,7 @@ class WallMessage {
 	}
 
 	public function getEditor() {
+		$this->load();
 		$user = User::newFromId( $this->getArticleComment()->mLastRevision->getUser() );
 		return $user;
 	}
